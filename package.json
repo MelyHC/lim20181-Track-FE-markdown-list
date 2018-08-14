@@ -1,0 +1,19 @@
+{
+  "name": "melyhc-md-links",
+  "version": "1.0.0",
+  "description": "Es una librería que verifica links en archivos .md",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MelyHC/lim20181-Track-FE-markdown-list.git"
+  },
+  "author": "MelyHC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MelyHC/lim20181-Track-FE-markdown-list/issues"
+  },
+  "homepage": "https://github.com/MelyHC/lim20181-Track-FE-markdown-list#readme"
+}
