@@ -1,9 +1,25 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-// const path = require('path');
-const [, , ...args] = process.argv
+const path = require('path');
+const program = require('commander');
+const fetch = require('node-fetch');
 
+const options = {
+  validate: program.validate,
+  stats: program.stats
+}
+
+const mdlinks = (route, options) => {
+  if (options.validate === true) {
+    if (fs.existsSync(route)) {
+      console.log('existe')
+      console.log(options.stats)
+    } else {
+      console.log('no existe')
+    }
+  }
+}
 // const checkRoute = (directory) => {
 //   try {
 //     process.chdir(directory);
@@ -14,13 +30,14 @@ const [, , ...args] = process.argv
 //   }
 // }
 
-const readArchFile = (argument) => {
+const readArchFile = (argument, option) => {
   // console.log(route)
   fs.stat(argument, (err, stats) => {
     if (stats.isFile()) {
-      fs.readFile(argument, (err, data) => {
+      fs.readFile(argument, 'utf8', (err, data) => {
         if (err) throw err;
-        console.log(data.toString());
+        console.log('hola');
+        console.log()
       });
     }
     if (stats.isDirectory()) {
@@ -34,8 +51,12 @@ const readArchFile = (argument) => {
       });
     }
   });
-
 }
 
 // checkRoute(args[0]);
-readArchFile(args[0]);
+// readArchFile(args[0]);
+program
+  .option('-v, --validate', 'Validar links si estan rotos o no')
+  .option('-s, --stats', 'Mostrar stats de los links')
+  .action(mdlinks)
+  .parse(process.argv);
