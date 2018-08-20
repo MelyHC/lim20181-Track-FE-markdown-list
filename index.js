@@ -11,46 +11,41 @@ const options = {
 }
 
 const mdlinks = (route, options) => {
-  if (options.validate === true) {
-    if (fs.existsSync(route)) {
-      console.log('existe')
-      console.log(options.stats)
-    } else {
-      console.log('no existe')
-    }
+  if (fs.existsSync(route)) {
+    // const routeFile = 
+    travelArchFile(path.resolve(route));
+    // console.log(checkRoute)
+  } else {
+    console.log('La ruta del archivo o carpeta no existe');
   }
 }
-// const checkRoute = (directory) => {
-//   try {
-//     process.chdir(directory);
-//     // console.log(process.cwd())
-//     readArchFile(directory);
-//   } catch (err) {
-//     console.log('La ruta no se encontró');
-//   }
-// }
 
-const readArchFile = (argument, option) => {
+const travelArchFile = (routeArchOrFile) => {
   // console.log(route)
-  fs.stat(argument, (err, stats) => {
+  fs.stat(routeArchOrFile, (err, stats) => {
     if (stats.isFile()) {
-      fs.readFile(argument, 'utf8', (err, data) => {
-        if (err) throw err;
-        console.log('hola');
-        console.log()
-      });
-    }
-    if (stats.isDirectory()) {
-      fs.readdir(argument, (err, files) => {
+      // console.log(routeArchOrFile)
+      const fileMd = checkFileMd(routeArchOrFile);
+      
+    } else if (stats.isDirectory()) {
+      fs.readdir(routeArchOrFile, (err, files) => {
         if (err) throw err;
         // console.log(files);
         for (let i = 0; i < files.length; i++) {
-          readArchFile(argument + '/' + files[i])
+          travelArchFile(`${routeArchOrFile}\\${files[i]}`)
         }
-        // readArchFile(files[0])
       });
     }
   });
+}
+
+const checkFileMd = (nameFile) => {
+  const extMd = /\.(md|mkdn|mdown|markdown?)$/i;
+  if (extMd.test(path.extname(nameFile))) {
+    return true
+  } else {
+    return false
+  }
 }
 
 // checkRoute(args[0]);
