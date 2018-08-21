@@ -13,26 +13,26 @@ const options = {
 const mdlinks = (route, options) => {
   if (fs.existsSync(route)) {
     // const routeFile = 
-    travelArchFile(path.resolve(route));
-    // console.log(checkRoute)
+    const travelFile = travelArchFile(path.resolve(route));
+    // console.log(travelFile)
   } else {
     console.log('La ruta del archivo o carpeta no existe');
   }
 }
 
 const travelArchFile = (routeArchOrFile) => {
-  // console.log(route)
   fs.stat(routeArchOrFile, (err, stats) => {
     if (stats.isFile()) {
       // console.log(routeArchOrFile)
       const fileMd = checkFileMd(routeArchOrFile);
-      
+      // return fileMd
+      // abs(true)
     } else if (stats.isDirectory()) {
       fs.readdir(routeArchOrFile, (err, files) => {
         if (err) throw err;
         // console.log(files);
         for (let i = 0; i < files.length; i++) {
-          travelArchFile(`${routeArchOrFile}\\${files[i]}`)
+         travelArchFile(`${routeArchOrFile}\\${files[i]}`)
         }
       });
     }
@@ -46,6 +46,13 @@ const checkFileMd = (nameFile) => {
   } else {
     return false
   }
+}
+
+const readFile = (file) => {
+  fs.readFile(file, 'utf8', (err, data) => {
+    if  (err) throw err;
+    console.log(data)
+  })
 }
 
 // checkRoute(args[0]);
