@@ -12,9 +12,7 @@ const options = {
 
 const mdlinks = (route, options) => {
   if (fs.existsSync(route)) {
-    // const routeFile = 
     const travelFile = travelArchFile(path.resolve(route));
-    // console.log(travelFile)
   } else {
     console.log('La ruta del archivo o carpeta no existe');
   }
@@ -22,18 +20,19 @@ const mdlinks = (route, options) => {
 
 const travelArchFile = (routeArchOrFile) => {
   fs.stat(routeArchOrFile, (err, stats) => {
+    if (err) throw err;
     if (stats.isFile()) {
-      // console.log(routeArchOrFile)
       const fileMd = checkFileMd(routeArchOrFile);
-      // return fileMd
-      // abs(true)
+      if (fileMd) {
+        // readFile(routeArchOrFile);
+        console.log(routeArchOrFile)
+      }
     } else if (stats.isDirectory()) {
       fs.readdir(routeArchOrFile, (err, files) => {
         if (err) throw err;
-        // console.log(files);
-        for (let i = 0; i < files.length; i++) {
-         travelArchFile(`${routeArchOrFile}\\${files[i]}`)
-        }
+        files.forEach(file => {
+          travelArchFile(`${routeArchOrFile}\\${file}`)
+        });
       });
     }
   });
@@ -41,17 +40,23 @@ const travelArchFile = (routeArchOrFile) => {
 
 const checkFileMd = (nameFile) => {
   const extMd = /\.(md|mkdn|mdown|markdown?)$/i;
-  if (extMd.test(path.extname(nameFile))) {
-    return true
-  } else {
-    return false
-  }
+  return extMd.test(path.extname(nameFile))
+}
+
+const createObject = (route, url, description) => {
+  return new object(href = url,
+    text = description,
+    file = route)
+
+
 }
 
 const readFile = (file) => {
   fs.readFile(file, 'utf8', (err, data) => {
-    if  (err) throw err;
-    console.log(data)
+    if (err) throw err;
+    while (data.length) {
+
+    }
   })
 }
 
