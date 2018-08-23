@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const program = require('commander');
 const fetch = require('node-fetch');
+const marked = require('marked')
 
 const options = {
   validate: program.validate,
@@ -23,23 +24,29 @@ const checkFileMd = (nameFile) => {
 }
 
 const readFile = (file) => {
+  // console.log(file)
   fs.readFile(file, 'utf8', (err, data) => {
     if (err) throw err;
-    console.log(typeof data);
-    const str = data.toString();
-    let arrTextUrl = str.match(expLink)
-    console.log(arrTextUrl);
+    const newStructureMd = marked(data);
+    // let arrTextUrl = str.match(expLink)
+    const splitMd = newStructureMd.split('<');
+    splitMd.forEach( lines => {
+      const linesLink = lines.match('a ')
+      console.log(linesLink)
+    }) 
   })
 }
 
 const travelArchFile = (routeArchOrFile) => {
+  const arrFilesMd = [];
   fs.stat(routeArchOrFile, (err, stats) => {
     if (err) throw err;
     if (stats.isFile()) {
       const fileMd = checkFileMd(routeArchOrFile);
       if (fileMd) {
-        // readFile(routeArchOrFile);
-        console.log(routeArchOrFile)
+        // arrFilesMd.push(routeArchOrFile)
+        readFile(routeArchOrFile);
+        // const arrFilesMd = filesMd.push(routeArchOrFile);
       }
     } else if (stats.isDirectory()) {
       fs.readdir(routeArchOrFile, (err, files) => {
@@ -49,6 +56,7 @@ const travelArchFile = (routeArchOrFile) => {
         });
       });
     }
+
   });
 }
 
