@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const program = require('commander');
-// const fetch = require('node-fetch');
+const fetch = require('node-fetch');
 const marked = require('marked')
 
 const checkFileMd = (nameFile) => {
@@ -45,7 +45,6 @@ const travelArchFile = (routeArchOrFile, links) => {
         });
       });
     }
-
   });
 }
 
@@ -54,17 +53,26 @@ const mdlinks = (route, options) => {
     const links = [];
     travelArchFile(path.resolve(route), links);
     setTimeout(() => {
+      // if (links.length !== 0) {
       resolve(links)
+      // } else {
+      // reject('El archivo no tiene links')
+      // }
     }, 500);
   })
 }
 
-/* const test = async (route, options) => {
-  await mdlinks(route, options);
-} */
+const countLinks = (arrLinks) => {
+  let countTotalLinks = 0;
+  let countUniqueLinks = 0;
+  console.log(new Set(arrLinks).size)
+  arrLinks.forEach(objLink => {
+    countTotalLinks++
+  })
+  return [`Total: ${countTotalLinks}`, `Unique: ${countUniqueLinks}`]
+}
 
 program
-  .arguments('file')
   .option('-v, --validate', 'Validar links si estan rotos o no')
   .option('-s, --stats', 'Mostrar stats de los links')
   .action(mdlinks)
@@ -75,13 +83,18 @@ const options = {
   stats: program.stats
 }
 
-/* test(program.args[0], options).then((result) => {
-  console.log(result);
-}) */
-
 mdlinks(program.args[0], options)
   .then(arrLinks => {
-    arrLinks.forEach(link => {
-      console.log(`${link.file}  ${link.href}  ${link.text}`)
-    })
+    if (options.validate && options.stats) {
+      console.log('stats y validate')
+    } else if (options.stats) {
+      console.log(countLinks(arrLinks))
+    } else if (options.validate) {
+      console.log('validate')
+    } else {
+      arrLinks.forEach(link => {
+        console.log(`${link.file}  ${link.href}  ${link.text}`)
+      })
+    }
   })
+  .catch(err => console.error)

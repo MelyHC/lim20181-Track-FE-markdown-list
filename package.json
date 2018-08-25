@@ -1,7 +1,7 @@
 {
   "name": "melyhc-md-links",
   "version": "1.0.4",
-  "description": "Es una librería que verifica links en archivos .md",
+  "description": "Es una librería que verifica links en archivos markdown",
   "main": "index.js",
   "bin": {
     "md-links": "index.js"
