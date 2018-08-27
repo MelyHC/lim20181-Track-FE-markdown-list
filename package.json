@@ -4,10 +4,10 @@
   "description": "Es una librería que verifica links en archivos markdown",
   "main": "index.js",
   "bin": {
-    "md-links": "index.js"
+    "md-links": "cli.js"
   },
   "scripts": {
-    "eslint": "eslint --ext .js index.js test/",
+    "eslint": "eslint --ext .js ./ test/",
     "pretest": "npm run eslint",
     "test": "jest"
   },
