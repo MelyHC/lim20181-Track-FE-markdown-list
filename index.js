@@ -9,40 +9,32 @@ const checkFileMd = (nameFile) => {
 }
 
 const readFileMd = (file, links) => {
-  fs.readFile(file, 'utf8', (err, data) => {
-    if (err) throw err;
-    const renderer = new marked.Renderer()
-    renderer.link = (href, title, text) => {
-      links.push({
-        href: href,
-        text: text,
-        file: file
-      })
-    }
-    marked(data, { renderer: renderer })
-  })
+  const dataFile = fs.readFileSync(file, 'utf8');
+  const renderer = new marked.Renderer()
+  renderer.link = (href, title, text) => {
+    links.push({
+      href: href,
+      text: text,
+      file: file
+    })
+  }
+  marked(dataFile, { renderer: renderer })
+  return links
 }
 
 const travelArchFile = (routeArchOrFile, links) => {
-  const arrFilesMd = [];
-  fs.stat(routeArchOrFile, (err, stats) => {
-    if (err) throw err;
-    if (stats.isFile()) {
-      const fileMd = checkFileMd(routeArchOrFile);
-      if (fileMd) {
-        // arrFilesMd.push(routeArchOrFile)
-        readFileMd(routeArchOrFile, links);
-        // const arrFilesMd = filesMd.push(routeArchOrFile);
-      }
-    } else if (stats.isDirectory()) {
-      fs.readdir(routeArchOrFile, (err, files) => {
-        if (err) throw err;
-        files.forEach(file => {
-          travelArchFile(path.join(`${routeArchOrFile}`, `${file}`), links);
-        });
-      });
+  const statFileArch = fs.statSync(routeArchOrFile)
+  if (statFileArch.isFile()) {
+    const fileMd = checkFileMd(routeArchOrFile);
+    if (fileMd) {
+      return readFileMd(routeArchOrFile, links);
     }
-  });
+  } else if (stats.isDirectory()) {
+    const files = fs.readdirSync(routeArchOrFile)
+    files.forEach(file => {
+      travelArchFile(path.join(`${routeArchOrFile}`, `${file}`), links);
+    });
+  }
 }
 
 module.exports = travelArchFile;
