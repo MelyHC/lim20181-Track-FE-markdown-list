@@ -26,24 +26,34 @@ const readFileMd = (arrFiles) => {
 }
 
 const travelArchFile = (routeArchOrFile) => {
-  let arrayDeRutas = [];
+  let arrRoute = [];
   const statFileArch = fs.statSync(routeArchOrFile)
   if (statFileArch.isFile()) {
     const fileMd = checkFileMd(routeArchOrFile);
     if (fileMd) {
-      arrayDeRutas.push(routeArchOrFile);
+      arrRoute.push(routeArchOrFile);
     }
   } else if (statFileArch.isDirectory()) {
     const files = fs.readdirSync(routeArchOrFile)
     files.forEach(file => {
-      arrayDeRutas = arrayDeRutas.concat(travelArchFile(path.join(`${routeArchOrFile}`, `${file}`)));
+      arrRoute = arrRoute.concat(travelArchFile(path.join(`${routeArchOrFile}`, `${file}`)));
     });
   }
-  return arrayDeRutas;
+  return arrRoute;
 }
 
 const linksUnique = (arrLinks) => {
   return [...new Set(arrLinks.map(link => link.href))];
+}
+
+const validateStats = (arrLinks) => {
+  const uniqueLinks = linksUnique(arrLinks)
+  const promises = uniqueLinks.map(link => fetch(link))
+  return Promise.all(promises)
+    .then(response => {
+      const arrLinksValidate = response.map(linkStatus => linkStatus.status > 400)
+      return `Total: ${arrLinks.length} \nUnique: ${uniqueLinks.length} \nBroker: ${arrLinksValidate.length} `
+    })
 }
 
 const mdLinks = (route, options) => {
@@ -52,17 +62,13 @@ const mdLinks = (route, options) => {
       let broken = 0;
       const arrRouteMd = travelArchFile(path.resolve(route));
       const arrLinksMd = readFileMd(arrRouteMd);
+      // resolve(arrLinksMd)
       if (arrLinksMd.length === 0) {
         resolve('Tu archivo o carpeta no tiene links');
       }
       if (options.validate && options.stats) {
-        const uniqueLinks = linksUnique(arrLinksMd)
-        const promises = uniqueLinks.map(link => fetch(link))
-        return Promise.all(promises)
-          .then(response => {
-            const arrlinks = response.map(linkStatus => linkStatus.status)
-            return `Total: ${arrLinksMd.length} \nUnique: ${uniqueLinks.length} \nBroker: ${arrlinks.length} `
-          })
+        validateStats(arrLinksMd)
+          .then(response => response)
       } else if (options.validate) {
         resolve('validate')
       } else if (options.stats) {
