@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const mdLinks = require('./main.js')
+const mdLinks = require('./index.js')
 
 program
   .arguments('<path>')
@@ -14,6 +14,7 @@ const options = {
   validate: program.validate,
   stats: program.stats
 }
+
 const route = program.args[0];
 
 if (!route) {
