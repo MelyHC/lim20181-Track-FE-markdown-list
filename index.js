@@ -46,33 +46,40 @@ const linksUnique = (arrLinks) => {
   return [...new Set(arrLinks.map(link => link.href))];
 }
 
-const validateStats = (arrLinks) => {
-  const uniqueLinks = linksUnique(arrLinks)
-  const promises = uniqueLinks.map(link => fetch(link))
+const linksBroken = (arrLinksValidate) => {
+  return arrLinksValidate.filter(link => link.status >= 400)
+}
+
+const validateStats = (arrObjLinks) => {
+  const arrLinks = arrObjLinks.map(link => link.href)
+  const promises = arrLinks.map(link => fetch(link))
   return Promise.all(promises)
     .then(response => {
-      const arrLinksValidate = response.map(linkStatus => linkStatus.status > 400)
-      return `Total: ${arrLinks.length} \nUnique: ${uniqueLinks.length} \nBroker: ${arrLinksValidate.length} `
+      const linksValidate = arrObjLinks.map((objLinkData, statsLink) => {
+        objLinkData.status = response[statsLink].status
+        objLinkData.statusText = response[statsLink].statusText
+        return objLinkData
+      })
+      return linksValidate;
     })
 }
 
 const mdLinks = (route, options) => {
   return new Promise((resolve, reject) => {
     if (fs.existsSync(route)) {
-      let broken = 0;
       const arrRouteMd = travelArchFile(path.resolve(route));
       const arrLinksMd = readFileMd(arrRouteMd);
-      // resolve(arrLinksMd)
       if (arrLinksMd.length === 0) {
         resolve('Tu archivo o carpeta no tiene links');
       }
       if (options.validate && options.stats) {
         validateStats(arrLinksMd)
-          .then(response => response)
+          .then(response => resolve({ Total: response.length, Unique: linksUnique(response).length, Broken: linksBroken(response).length }))
       } else if (options.validate) {
-        resolve('validate')
+        validateStats(arrLinksMd)
+          .then(response => resolve(response))
       } else if (options.stats) {
-        resolve(`Total: ${arrLinksMd.length} \nUnique: ${linksUnique(arrLinksMd).length}`)
+        resolve({ Total: arrLinksMd.length, Unique: linksUnique(arrLinksMd).length })
       } else {
         resolve(arrLinksMd);
       }

@@ -17,3 +17,6 @@ Tópicos:
 - [Asíncronía en js](https://carlosazaustre.com/manejando-la-asincronia-en-javascript/)
 - [Node.js](https://nodejs.org/en/)
 - [Node.js](https://nodejs.org/en/)
+- [Link roto 1](https://nodejs.org/en/asdeasd)
+- [Link roto 2](https://semver.org/retayre)
+- [Link roto 3](https://nodejs.org/api/asdeasd)
