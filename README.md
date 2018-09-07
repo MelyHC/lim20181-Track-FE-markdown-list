@@ -9,7 +9,7 @@ para verificar los links que contengan y reportar algunas estadísticas como ver
 
 #### Versión
 
-1.0.6
+1.0.7
 
 ## Instalación
 
